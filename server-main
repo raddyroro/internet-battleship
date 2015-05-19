@@ -1,0 +1,38 @@
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Scanner;
+
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
+
+public class Main {
+
+	JFrame frame = new JFrame("Defragmenter");
+	JTextField portTF = new JTextField("Port");
+	JTextField addressTF = new JTextField("IP Address");
+public static void main(String[] args) throws IOException {
+		try {
+			System.out.println("Please enter the IP of the server you are connecting to:");
+			Scanner scanner;
+			scanner = new Scanner(System.in);
+			String serverAddress = scanner.nextLine();
+			System.out.println(serverAddress);
+			System.out.println("Now enter the port you wish to connect to (The server usually listens on 40):");
+			String serverPortString = scanner.nextLine();
+			System.out.println(serverPortString);
+			scanner.close();
+			int serverPort = Integer.parseInt(serverPortString);
+			System.out.println("Trying to connect...");
+			Socket s = new Socket(serverAddress, serverPort);
+			Client client = new Client(s);
+			Thread t = new Thread(client);
+			t.start();
+		} catch (Exception e) {
+			System.out.println("Cannot detect server...");
+			System.out.println("Please check if the server is online and try again");
+			e.printStackTrace();
+		}
+	}
+
+}
