@@ -1,0 +1,38 @@
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+
+public class Main {
+
+
+	private static ServerSocket server;
+
+	public static void main(String[] args) throws IOException {
+			try {
+				System.out.println("Please enter the port number you want to listen to:");
+				Scanner scanner;
+				scanner = new Scanner(System.in);
+				String portString = scanner.nextLine();
+				System.out.println("Port: " + portString);
+				scanner.close();
+				int port = Integer.parseInt(portString);
+				System.out.println("Opening connection...");
+				server = new ServerSocket(port);
+				System.out.println("Waiting for client...");
+				
+				while (true) {
+					Socket s = server.accept();
+					System.out.println("Client connected from " + s.getLocalAddress().getHostName());
+					Client battle = new Client(s);
+					Thread t = new Thread(battle);
+					t.start();
+				}
+			} catch (Exception e) {
+				System.out.println("An error occured...");
+				e.printStackTrace();
+			}
+	}
+
+}
