@@ -1,16 +1,52 @@
+import java.awt.Container;
+import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 
 public class Client implements Runnable {
 
+	/*
+	 *  s = the socket coming in from Main
+	 *  input = Input from the socket, created in this class
+	 *  output = Output to the server, created in this class
+	 *  closeOutput and closeInput = Methods used in main to close both input and output before closing the socket
+	 */
+	
+	static DataInputStream input;
+	static PrintStream output;
+	
 	public Client(Socket s) {
-		// TODO Auto-generated constructor stub
+		try {
+	       input = new DataInputStream(s.getInputStream());
+	       System.out.println("Got input stream!");
+	    }
+	    catch (IOException e) {
+	    	System.out.println("An error occured...");
+	    	System.out.println(e);
+	    }
+		try {
+			output = new PrintStream(s.getOutputStream());
+			System.out.println("Got output stream");
+		} catch (Exception e) {
+			System.out.println("An error occured...");
+	    	System.out.println(e);
+		}
 	}
 
 
 	@Override
-	public void run() {
-		
+	public void run () {
+
+	}
+
+
+	public static void closeOutput() {
+		output.close();
+	}
+	
+	public static void closeInput() throws IOException {
+		input.close();
 	}
 
 }
