@@ -1,38 +1,120 @@
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
-public class Main {
 
+public class Main implements WindowListener{
 
 	private static ServerSocket server;
+	private static Socket s;
+	private static int serverPort;
 
 	public static void main(String[] args) throws IOException {
+		
+		JFrame f = new JFrame("Battleship");
+	    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        f.setSize(400, 300);
+        f.setResizable(false);
+        f.setLocationByPlatform(true);
+        f.setVisible(true);
+		
 			try {
-				System.out.println("Please enter the port number you want to listen to:");
-				Scanner scanner;
-				scanner = new Scanner(System.in);
-				String portString = scanner.nextLine();
-				System.out.println("Port: " + portString);
-				scanner.close();
-				int port = Integer.parseInt(portString);
-				System.out.println("Opening connection...");
-				server = new ServerSocket(port);
-				System.out.println("Waiting for client...");
-				
+				welcomeDialog(f);
+				server = new ServerSocket(serverPort);
+			
 				while (true) {
-					Socket s = server.accept();
+					s = server.accept();
 					System.out.println("Client connected from " + s.getLocalAddress().getHostName());
 					Client battle = new Client(s);
 					Thread t = new Thread(battle);
 					t.start();
 				}
 			} catch (Exception e) {
-				System.out.println("An error occured... (Maybe the port is in use?)");
+				System.out.println("An error occured...");
 				e.printStackTrace();
 			}
 	}
+	
+	public static void welcomeDialog(JFrame f){
+		JPanel p = new JPanel(new BorderLayout(5,5));
+        JPanel labels = new JPanel(new GridLayout(0,1,1,2));
+        labels.add(new JLabel("Port", SwingConstants.RIGHT));
+        p.add(labels, BorderLayout.WEST);
+        JPanel controls = new JPanel(new GridLayout(0,1,2,2));
+        JTextField portField = new JTextField("40");
+        controls.add(portField);
+        p.add(controls, BorderLayout.CENTER);
+
+        //LayoutManager l = new GroupLayout(p);
+        //p.setLayout(l);
+        JOptionPane.showMessageDialog(
+            f, p, "Welcome to Battleship", JOptionPane.QUESTION_MESSAGE);
+        
+        System.out.println(portField.getText());
+        serverPort = Integer.parseInt(portField.getText());
+        
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		try {
+			s.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+
 
 }
