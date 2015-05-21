@@ -79,6 +79,8 @@ public class Main implements WindowListener{
 	@Override
 	public void windowClosing(WindowEvent e) {
 		try {
+			Client.closeOutput();
+			Client.closeInput();
 			s.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
