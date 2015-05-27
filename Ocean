@@ -1,0 +1,61 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import javax.swing.JPanel;
+
+
+public class Ocean extends JPanel {
+
+	public final int PLAYER_OCEAN = 0;
+	public final int SHIPYARD = 2;
+	public final int OPPONENT_OCEAN = 1;
+	
+	int id;
+	int columnWidth;
+	int rowHeight;
+	
+	public Ocean(){
+		super();
+	}
+	
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
+		
+		if (id == PLAYER_OCEAN){
+			g.setColor(Color.BLUE);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			
+			columnWidth = this.getWidth() / 11;
+			rowHeight = this.getHeight() / 11;
+			g.setColor(Color.WHITE);
+			for (int x = columnWidth; x < this.getWidth() - columnWidth; x += columnWidth) {
+				g.drawLine(x, 0, x, this.getHeight());
+				g.drawString("" + (char)('A' + (x/columnWidth - 1)), x + columnWidth/2 - 3, rowHeight/2 + 3);
+			}
+			for (int y = rowHeight; y < this.getHeight() - rowHeight; y += rowHeight) {
+				g.drawLine(0, y, this.getWidth(), y);
+				g.drawString("" + (0 + (y/rowHeight - 1)), columnWidth/2 - 3 ,  y + rowHeight/2 + 3);
+			}
+		}
+		else if (id == SHIPYARD){
+			g.setColor(Color.GRAY);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		}
+		else if (id == OPPONENT_OCEAN){
+			g.setColor(Color.CYAN);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			
+			columnWidth = this.getWidth() / 11;
+			rowHeight = this.getHeight() / 11;
+			g.setColor(Color.WHITE);
+			for (int x = columnWidth; x < this.getWidth() - columnWidth; x += columnWidth) {
+				g.drawLine(x, 0, x, this.getHeight());
+				g.drawString("" + (char)('A' + (x/columnWidth - 1)), x + columnWidth/2 - 3, rowHeight/2 + 3);
+			}
+			for (int y = rowHeight; y < this.getHeight() - rowHeight; y += rowHeight) {
+				g.drawLine(0, y, this.getWidth(), y);
+				g.drawString("" + (0 + (y/rowHeight - 1)), columnWidth/2 - 3 ,  y + rowHeight/2 + 3);
+			}
+		}
+	}
+
+}
