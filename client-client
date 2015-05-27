@@ -12,6 +12,8 @@ public class Client implements Runnable {
 	//Declares input and output as the in and out for the socket
 	static DataInputStream input;
 	static PrintStream output;
+	boolean[] arraySquareState = new boolean[100];
+	boolean[] alreadyHit = new boolean[100];
 	
 	public Client(Socket s) {
 		//This try/catch block opens both the input and the output stream.
@@ -38,6 +40,9 @@ public class Client implements Runnable {
 	//Closes the input stream
 	public static void closeInput() throws IOException {
 		input.close();
+	}
+	public static void checkHit() {
+		coordinates = input;
 	}
 	
 }
