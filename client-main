@@ -1,4 +1,6 @@
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -6,6 +8,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,17 +23,53 @@ public class Main implements WindowListener{
 	public static int serverPort;
 	public static String serverAddress;
 	public static Socket s;
-	
-	
+	public static Ocean opponentOcean = new Ocean();
+	public static Ocean playerOcean = new Ocean();
+
 	
 	public static void main(String[] args) throws IOException {
 		JFrame f = new JFrame("Battleship");
 	    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        f.setSize(400, 300);
+        f.setSize(1600, 850);
         f.setResizable(false);
-        f.setLocationByPlatform(true);
         f.setVisible(true);
-	        
+        f.setLayout(new BorderLayout());
+        
+        Container south = new Container();
+        JButton startButton = new JButton("Start Game!");
+        south.add(startButton); 
+        
+        f.add(south, BorderLayout.SOUTH);
+        
+        
+        Container center = new Container();
+        center.setLayout(new BorderLayout());
+        
+        Container oceanContainer = new Container();
+        oceanContainer.setLayout(new GridLayout(0, 2));
+        
+        JLabel POlabel = new JLabel("Player Ocean", SwingConstants.CENTER);
+        POlabel.setPreferredSize(new Dimension(center.getWidth()/ 2, 50));
+        JLabel OOlabel = new JLabel("Your Shipyard", SwingConstants.CENTER);
+        OOlabel.setPreferredSize(new Dimension(center.getWidth()/ 2, 50));
+        
+        Container labelContainer = new Container();
+        labelContainer.setLayout(new GridLayout(0, 2));
+        labelContainer.add(POlabel);
+        labelContainer.add(OOlabel);
+
+        oceanContainer.add(playerOcean);
+        oceanContainer.add(opponentOcean);
+        
+        center.add(oceanContainer, BorderLayout.CENTER);
+        center.add(labelContainer, BorderLayout.NORTH);
+        
+        f.add(center, BorderLayout.CENTER);
+       
+	    //sets the starting state for the Oceans as SHIPYARD and PLAYER_OCEAN
+        //this is what lets the paintComponent method know what to do with them
+        playerOcean.id = playerOcean.PLAYER_OCEAN;
+        opponentOcean.id = opponentOcean.SHIPYARD;
 		
 		try {
 			welcomeDialog(f);
@@ -44,6 +83,8 @@ public class Main implements WindowListener{
 			System.out.println("Please check if the server is online and try again");
 			e.printStackTrace();
 		}
+		
+	
 	}
 	
 	public static void welcomeDialog(JFrame f){
@@ -79,8 +120,6 @@ public class Main implements WindowListener{
 	@Override
 	public void windowClosing(WindowEvent e) {
 		try {
-			Client.closeOutput();
-			Client.closeInput();
 			s.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
