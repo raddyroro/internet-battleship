@@ -1,0 +1,233 @@
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Scanner;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+
+public class Main implements WindowListener, ActionListener, MouseListener{
+	
+	public static JFrame frame = new JFrame();
+	public static int serverPort;
+	public static String serverAddress;
+	public static Socket s;
+	public static Ocean opponentOcean = new Ocean();
+	public static Ocean playerOcean = new Ocean();
+	public static JButton button = new JButton("Start Game!");
+	public static JTextField yField = new JTextField();
+    public static JTextField xField = new JTextField();
+
+	
+	public static void main(String[] args) throws IOException {
+		JFrame f = new JFrame("Battleship");
+	    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f.setSize(1600, 850);
+        f.setResizable(false);
+        
+        f.setLayout(new BorderLayout());
+   
+        Container center = new Container();
+        center.setLayout(new BorderLayout());
+        
+        Container oceanContainer = new Container();
+        oceanContainer.setLayout(new GridLayout(0, 2));
+        
+        JLabel POlabel = new JLabel("Player Ocean", SwingConstants.CENTER);
+        POlabel.setPreferredSize(new Dimension(center.getWidth()/ 2, 50));
+        JLabel OOlabel = new JLabel("Your Shipyard", SwingConstants.CENTER);
+        OOlabel.setPreferredSize(new Dimension(center.getWidth()/ 2, 50));
+        
+        Container labelContainer = new Container();
+        labelContainer.setLayout(new GridLayout(0, 2));
+        labelContainer.add(POlabel);
+        labelContainer.add(OOlabel);
+
+        oceanContainer.add(playerOcean);
+        oceanContainer.add(opponentOcean);
+        
+        Container southContainer = new Container();
+        southContainer.setLayout(new GridLayout(0,2));
+        Container textFieldContainer = new  Container();
+        textFieldContainer.setLayout(new GridLayout(2, 2));
+        
+        JLabel xLabel = new JLabel("Target X Coordinate");
+        JLabel yLabel = new JLabel("Target Y Coordinate");
+        textFieldContainer.add(xLabel);
+        textFieldContainer.add(xField);
+        textFieldContainer.add(yLabel);
+        textFieldContainer.add(yField);
+        
+        southContainer.add(textFieldContainer);
+        southContainer.add(button);
+        
+        center.add(oceanContainer, BorderLayout.CENTER);
+        center.add(labelContainer, BorderLayout.NORTH);
+        center.add(southContainer, BorderLayout.SOUTH);
+        
+        f.add(center, BorderLayout.CENTER);
+       
+	    //sets the starting state for the Oceans as SHIPYARD and PLAYER_OCEAN
+        //this is what lets the paintComponent method know what to do with them
+        playerOcean.id = playerOcean.PLAYER_OCEAN;
+        opponentOcean.id = opponentOcean.SHIPYARD;
+        
+        f.setVisible(true);
+		
+		try {
+			welcomeDialog(f);
+			System.out.println("Trying to connect...");
+			s = new Socket(serverAddress, serverPort);
+			Client client = new Client(s);
+			Thread t = new Thread(client);
+			t.start();
+		} catch (Exception e) {
+			System.out.println("Cannot detect server...");
+			System.out.println("Please check if the server is online and try again");
+			e.printStackTrace();
+		}
+		
+	
+	}
+	
+	public static void welcomeDialog(JFrame f){
+		JPanel p = new JPanel(new BorderLayout(5,5));
+
+        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
+        labels.add(new JLabel("IP Address", SwingConstants.RIGHT));
+        labels.add(new JLabel("Port (40 Reccomended)", SwingConstants.RIGHT));
+        p.add(labels, BorderLayout.WEST);
+
+        JPanel controls = new JPanel(new GridLayout(0,1,2,2));
+        JTextField IPfield = new JTextField("");
+        controls.add(IPfield);
+        JTextField portField = new JTextField();
+        controls.add(portField);
+        p.add(controls, BorderLayout.CENTER);
+
+        //LayoutManager l = new GroupLayout(p);
+        //p.setLayout(l);
+        JOptionPane.showMessageDialog(
+            f, p, "Welcome to Battleship", JOptionPane.QUESTION_MESSAGE);
+		
+        serverPort = Integer.parseInt(portField.getText());
+        serverAddress = IPfield.getText();
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		try {
+			s.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource().equals(button)){
+			if (opponentOcean.id == opponentOcean.SHIPYARD){
+				//changes to opponent ocean and sets the gui to what it should be now
+				button.setText("Fire!");
+				opponentOcean.id = opponentOcean.OPPONENT_OCEAN;
+				opponentOcean.repaint();
+			}
+			else if (opponentOcean.id == opponentOcean.OPPONENT_OCEAN){
+				//fire a shot
+			}
+		}
+		
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		//if we're in the shipyard stage
+		if (opponentOcean.id == opponentOcean.SHIPYARD){
+			
+		}
+		else if (opponentOcean.id == opponentOcean.OPPONENT_OCEAN){
+			xField.setText("" + e.getX());
+			yField.setText("" + e.getY());
+		}
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
