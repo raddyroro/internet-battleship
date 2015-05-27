@@ -9,6 +9,7 @@ public class Ocean extends JPanel {
 	public final int SHIPYARD = 2;
 	public final int OPPONENT_OCEAN = 1;
 	
+	
 	int id;
 	int columnWidth;
 	int rowHeight;
